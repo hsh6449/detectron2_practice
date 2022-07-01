@@ -26,7 +26,9 @@ from detectron2.data import MetadataCatalog, DatasetCatalog
 import matplotlib.pyplot as plt
 
 im = cv2.imread("./imdata/000000439715.jpg")
-plt.imshow(im)
+plt.figure(figsize=(20,20))
+im_ = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)
+plt.imshow(im_)
 #%%
 cfg = get_cfg() # get config
 
@@ -35,7 +37,7 @@ cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5 #set threshold
 
 cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
 predictor = DefaultPredictor(cfg)
-outputs = predictor(im)
+outputs = predictor(im_)
 
 #%%
 print(outputs["instances"].pred_classes)
@@ -44,7 +46,10 @@ print(outputs["instances"].pred_boxes)
 #%% Visualizer : to draw predictions
 v = Visualizer(im[:,:,::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale =1.2)
 out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-plt.imshow(out.get_image()[:,:,::-1])
+plt.figure(figsize=(20,20))
+out = out.get_image()[:,:,::-1]
+rgb_out = cv2.cvtColor(out, cv2.COLOR_RGB2BGR)
+plt.imshow(rgb_out)
 #%%
 im[:,:,::-1] # ::-1은 -1간격(역순으로) 출력
 #%%
@@ -104,8 +109,12 @@ for d in random.sample(dataset_dicts, 5):
     img = cv2.imread(d["file_name"])
     visualizer = Visualizer(img[:,:,::-1], metadata = balloon_metadata, scale=0.5)
     out = visualizer.draw_dataset_dict(d)
-    plt.imshow(out.get_image()[:,:,::-1])
-
+    output = out.get_image()[:,:,::-1]
+    rgb_im = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
+    plt.figure(figsize=(20,20))
+    plt.imshow(rgb_im)
+#%%
+dataset_dicts[1]
 #%%
 import detectron2.data.transforms as T
 from detectron2.data import DatasetMapper
@@ -194,6 +203,9 @@ for d in random.sample(dataset_dicts, 3):
                 instance_mode = ColorMode.IMAGE_BW)
 
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    out_ = out.get_image()[:,:,::-1]
+    rgb_out = cv2.cvtColor(out_, cv2.COLOR_RGB2BGR)
+    plt.figure(figsize=(20,20))
     plt.imshow(out.get_image()[:,:,::-1])
 
 # %%

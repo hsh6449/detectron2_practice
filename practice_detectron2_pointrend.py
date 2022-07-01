@@ -27,6 +27,7 @@ from detectron2.projects import point_rend
 # %%
 plt.figure(figsize=(20,20))
 im = cv2.imread("./imdata/000000005477.jpg")
+im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
 plt.imshow(im)
 print(im.shape)
 # %% rcnn model prediction
@@ -91,6 +92,7 @@ def plot_mask(mask, title="", point_coords=None, figsize=10, point_marker_size=5
   plt.ylim(H - 0.5, - 0.5)
   plt.show()
 # %%
+from detectron2.data import transforms as T
 plt.figure(figsize=(20,20))
 plt.imshow(T.ResizeShortestEdge(800, 1333).get_transform(im).apply_image(im))
 print(T.ResizeShortestEdge(800, 1333).get_transform(im).apply_image(im).shape)
